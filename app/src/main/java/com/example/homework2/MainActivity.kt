@@ -60,7 +60,12 @@ class MainActivity : ComponentActivity() {
 fun Homework2Layout() {
     var amountInput by remember { mutableStateOf("") }
     var interestInput by remember { mutableStateOf("") }
-    val calculateMortgage by remember { mutableStateOf("") }
+    var numberOfYearsInput by remember { mutableStateOf("") }
+
+    val loanAmount = amountInput.toIntOrNull() ?: 0
+    val interestRate = interestInput.toDoubleOrNull()?.div(100)?.div(12) ?: 0.0
+    val numberOfMonths = numberOfYearsInput.toIntOrNull()?.times(12) ?: 0
+    val monthlyPayment = calculateMortgage(loanAmount, interestRate, numberOfMonths)
 
 
     Column(
@@ -71,13 +76,13 @@ fun Homework2Layout() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.loan_amount),
+            text = stringResource(R.string.app_name),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
         EditNumberField(
-            label = R.string.number_of_years,
+            label = R.string.loan_amount,
             leadingIcon = R.drawable.money,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -89,12 +94,13 @@ fun Homework2Layout() {
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
+
         EditNumberField(
-            label = R.string.monthly_payment,
+            label = R.string.interest_rate,
             leadingIcon = R.drawable.percent,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             value = interestInput,
             onValueChange = { interestInput = it },
@@ -102,22 +108,27 @@ fun Homework2Layout() {
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
+        EditNumberField(
+            label = R.string.number_of_years,
+            leadingIcon = R.drawable.calendar,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            value = numberOfYearsInput,
+            onValueChange = { numberOfYearsInput = it },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
         Text(
-            text = stringResource(R.string.interest_rate, calculateMortgage),
+            text = stringResource(R.string.monthly_payment, monthlyPayment),
             fontWeight = FontWeight.Bold,
             fontSize = 36.sp
         )
         Spacer(modifier = Modifier.height(150.dp))
         }
     }
-
-private fun monthlyPayment(p: int, r: Double, n: int): String {
-    var mortgage = p * ((r * (1.0 + r).pow(n)) / ((1.0 + r).pow(n) - 1))
-    if (mortgage.isNaN() || mortgage.isInfinite()) mortgage = 0.0
-    return NumberFormat.getCurrencyInstance().format(mortgage)
-}
-
-
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -138,6 +149,12 @@ fun EditNumberField(
         keyboardOptions = keyboardOptions,
         modifier = modifier
     )
+}
+
+private fun calculateMortgage(p: Int, r: Double, n: Int): String {
+    var mortgage = p * ((r * (1.0 + r).pow(n)) / ((1.0 + r).pow(n) - 1))
+    if (mortgage.isNaN() || mortgage.isInfinite()) mortgage = 0.0
+    return NumberFormat.getCurrencyInstance().format(mortgage)
 }
 
 @Preview(showBackground = true)
