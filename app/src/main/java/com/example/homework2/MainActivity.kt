@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -112,7 +111,7 @@ fun Homework2Layout() {
         }
     }
 
-private fun monthlyPayment(p: Double, r: Double, n: Boolean): String {
+private fun monthlyPayment(p: int, r: Double, n: int): String {
     var mortgage = p * ((r * (1.0 + r).pow(n)) / ((1.0 + r).pow(n) - 1))
     if (mortgage.isNaN() || mortgage.isInfinite()) mortgage = 0.0
     return NumberFormat.getCurrencyInstance().format(mortgage)
@@ -120,7 +119,7 @@ private fun monthlyPayment(p: Double, r: Double, n: Boolean): String {
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun EditNumberField(
     @StringRes label: Int,
